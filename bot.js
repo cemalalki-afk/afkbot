@@ -57,17 +57,13 @@ function createBot() {
   bot.on('spawn', () => {
     spawnTime = Date.now();
     setTimeout(() => {
-      bot.chat('/register 123456abc- 123456abc-');
-      console.log('📝 Register komutu gönderildi');
-    }, 1500);
-    setTimeout(() => {
       bot.chat('/login 123456abc-');
       console.log('🔑 Login komutu gönderildi');
-    }, 3000);
+    }, 1500);
     setTimeout(() => {
       bot.setControlState('sneak', true);
       console.log(`✅ ${config.botUsername} is Ready!`);
-    }, 5000);
+    }, 3000);
     setTimeout(movementCycle, STEP_INTERVAL);
   });
 
