@@ -1,0 +1,14 @@
+{
+    "name": "nuekkis-afk-bot",
+    "version": "1.0.0",
+    "description": "Minecraft AFK Bot",
+    "main": "bot.js",
+    "scripts": {
+      "start": "node bot.js"
+    },
+    "author": "nuekkis",
+    "license": "MIT",
+    "dependencies": {
+      "mineflayer": "^4.29.0"
+    }
+  }
