@@ -4,6 +4,7 @@ const config = require('./config.json');
 const RECONNECT_DELAY = 5000;
 const AI_TOKEN = process.env.GITHUB_TOKEN;
 const AI_COOLDOWN = 3000;
+console.log('🔑 Token durumu:', AI_TOKEN ? `Yüklendi (${AI_TOKEN.slice(0, 8)}...)` : 'YOK - GITHUB_TOKEN env var bulunamadı');
 let lastAIResponse = 0;
 
 async function callAI(username, message) {
