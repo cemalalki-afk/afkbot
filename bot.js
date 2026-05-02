@@ -20,7 +20,7 @@ async function callAI(username, message) {
         messages: [
           {
             role: 'system',
-            content: 'Sen CodexBOT2 adında bir Minecraft botusun. Türkçe konuş, çok kısa ve samimi cevaplar ver (maksimum 1 cümle, 50 kelimeden az), arkadaş gibi konuş. Minecraft dünyasındasın.'
+            content: 'Sen CodexBOT2 adında bir Minecraft botusun. Türkçe konuş, çok kısa ve samimi ve azcıkda argolu cevaplar ver (maksimum 1 cümle, 50 kelimeden az), arkadaş gibi konuş. Minecraft dünyasındasın.'
           },
           {
             role: 'user',
