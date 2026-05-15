@@ -1,0 +1,137 @@
+-- [[ RISEHUB V1.5: NEON STEALTH GUI ]] --
+-- Professional Interface for Cybersecurity Research
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+-- Ayarlar Tablosu
+local RiseSettings = {
+    Aimbot = true,
+    ESP = true,
+    TeamCheck = true,
+    Smoothness = 0.15,
+    AimKey = Enum.KeyCode.E
+}
+
+-- [[ GUI OLUŞTURMA ]]
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "RiseHub_UI"
+ScreenGui.Parent = (game:GetService("CoreGui") or LocalPlayer:FindFirstChild("PlayerGui"))
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 180, 0, 220)
+MainFrame.Position = UDim2.new(0.02, 0, 0.4, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BorderSizePixel = 2
+MainFrame.BorderColor3 = Color3.fromRGB(0, 255, 0)
+MainFrame.Active = true
+MainFrame.Draggable = true -- Paneli istediğin yere çekebilirsin
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "RISEHUB V1.5"
+Title.TextColor3 = Color3.fromRGB(0, 255, 0)
+Title.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Title.Font = Enum.Font.Code
+
+-- Buton Oluşturucu Fonksiyon
+local function CreateButton(text, pos, callback)
+    local btn = Instance.new("TextButton", MainFrame)
+    btn.Size = UDim2.new(0.8, 0, 0, 30)
+    btn.Position = UDim2.new(0.1, 0, 0, pos)
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.SourceSans
+    btn.BorderSizePixel = 0
+    
+    btn.MouseButton1Click:Connect(function()
+        callback(btn)
+    end)
+    return btn
+end
+
+-- Butonlar
+local aimBtn = CreateButton("Aimbot: ON", 50, function(b)
+    RiseSettings.Aimbot = not RiseSettings.Aimbot
+    b.Text = RiseSettings.Aimbot and "Aimbot: ON" or "Aimbot: OFF"
+    b.TextColor3 = RiseSettings.Aimbot and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+end)
+
+local espBtn = CreateButton("ESP: ON", 90, function(b)
+    RiseSettings.ESP = not RiseSettings.ESP
+    b.Text = RiseSettings.ESP and "ESP: ON" or "ESP: OFF"
+    b.TextColor3 = RiseSettings.ESP and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+end)
+
+local teamBtn = CreateButton("TeamCheck: ON", 130, function(b)
+    RiseSettings.TeamCheck = not RiseSettings.TeamCheck
+    b.Text = RiseSettings.TeamCheck and "TeamCheck: ON" or "TeamCheck: OFF"
+end)
+
+local closeLabel = Instance.new("TextLabel", MainFrame)
+closeLabel.Size = UDim2.new(1, 0, 0, 20)
+closeLabel.Position = UDim2.new(0, 0, 1, -25)
+closeLabel.Text = "Press [INSERT] to Hide"
+closeLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+closeLabel.BackgroundTransparency = 1
+closeLabel.TextSize = 12
+
+-- [[ FONKSİYONLAR ]]
+local function GetTarget()
+    local closest = nil
+    local maxDist = math.huge
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("Head") then
+            if RiseSettings.TeamCheck and v.Team == LocalPlayer.Team then continue end
+            local pos, vis = Camera:WorldToViewportPoint(v.Character.Head.Position)
+            if vis then
+                local mag = (Vector2.new(pos.X, pos.Y) - UIS:GetMouseLocation()).Magnitude
+                if mag < maxDist then
+                    maxDist = mag
+                    closest = v
+                end
+            end
+        end
+    end
+    return closest
+end
+
+RunService.RenderStepped:Connect(function()
+    -- Aimbot Logic
+    if RiseSettings.Aimbot and UIS:IsKeyDown(RiseSettings.AimKey) then
+        local target = GetTarget()
+        if target then
+            Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, target.Character.Head.Position), RiseSettings.Smoothness)
+        end
+    end
+    
+    -- ESP Logic (Basit Highlight)
+    for _, v in pairs(Players:GetPlayers()) do
+        if v.Character then
+            local hl = v.Character:FindFirstChild("RiseESP")
+            if RiseSettings.ESP and v ~= LocalPlayer then
+                if not hl then
+                    hl = Instance.new("Highlight", v.Character)
+                    hl.Name = "RiseESP"
+                end
+                hl.FillColor = (RiseSettings.TeamCheck and v.Team == LocalPlayer.Team) and Color3.fromRGB(0, 0, 255) or Color3.fromRGB(0, 255, 0)
+                hl.FillTransparency = 0.6
+            else
+                if hl then hl:Destroy() end
+            end
+        end
+    end
+end)
+
+-- Menü Gizleme
+UIS.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Insert then
+        MainFrame.Visible = not MainFrame.Visible
+    end
+end)
+
+print("RiseHub V1.5 Loaded Successfully.")
